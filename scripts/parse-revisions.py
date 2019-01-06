@@ -19,7 +19,7 @@ def map_(pages, path):
 def parse(src, dst):
     files = glob.glob(src)
 
-    with open(dst, 'w', buffering=100) as f:
+    with open(dst, 'w', buffering=1000) as f:
         for r in mwxml.map(map_, files):
             f.write('\t'.join(map(str, r)) + '\n')
 

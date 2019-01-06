@@ -1,4 +1,4 @@
-name := "graphx"
+name := "wiki2graph"
 
 version := "0.1"
 
