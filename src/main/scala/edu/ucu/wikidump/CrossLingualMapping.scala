@@ -55,14 +55,14 @@ object CrossLingualMapping {
 
     import spark.implicits._
 
-    val leftArticles = parseSqlDump(spark.read.textFile(config.fromPagesFile)).map {
+    val leftArticles = parseSqlDump(spark, spark.read.textFile(config.fromPagesFile)).map {
       case id :: ns :: title :: _ :: _ :: isRedirect :: _ => Article(id.toInt, ns.toInt, title, isRedirect.toInt > 0)
     }
       .filter(_.ns == 0)
       .filter(!_.isRedirect)
       .select($"id".as("leftId"), $"title".as("left"))
 
-    val rightArticles = parseSqlDump(spark.read.textFile(config.toPagesFile)).map {
+    val rightArticles = parseSqlDump(spark, spark.read.textFile(config.toPagesFile)).map {
       case id :: ns :: title :: _ :: _ :: isRedirect :: _ => Article(id.toInt, ns.toInt, title, isRedirect.toInt > 0)
     }
       .filter(_.ns == 0)

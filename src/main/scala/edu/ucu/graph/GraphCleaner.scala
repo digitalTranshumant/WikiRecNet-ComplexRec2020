@@ -24,8 +24,8 @@ object GraphCleaner {
   }
 
   def preprocess[VD, ED](graph: Graph[VD, ED]): Graph[Node, ED] = {
-    val outDegrees: VertexRDD[Int] = graph.outDegrees
-    val inDegrees: VertexRDD[Int] = graph.inDegrees
+    val outDegrees: VertexRDD[Int] = graph.ops.outDegrees
+    val inDegrees: VertexRDD[Int] = graph.ops.inDegrees
     graph.outerJoinVertices(outDegrees) { (vid, data, deg) => deg.getOrElse(0) }
       .outerJoinVertices(inDegrees) {
         (vid, outDegree, deg) => {
@@ -46,9 +46,9 @@ object GraphCleaner {
     if (config.mode == "filter") {
       val filteredGraph = graph.filter(
         preprocess,
-        vpred = (_: VertexId, deg: (Int, Int, Int)) => {
+        vpred = (_: VertexId, deg: Node) => {
           deg match {
-            case (in, out, outRate) => in > 0 && out > 0 && outRate <= config.maxOutRate
+            case Node(in, out, outRate) => in > 0 && out > 0 && outRate <= config.maxOutRate
           }
         }
       )

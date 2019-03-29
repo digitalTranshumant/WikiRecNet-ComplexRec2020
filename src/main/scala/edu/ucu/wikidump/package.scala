@@ -1,7 +1,8 @@
 package edu.ucu
 
+
 import com.univocity.parsers.csv.{CsvFormat, CsvParser, CsvParserSettings}
-import org.apache.spark.sql.Dataset
+import org.apache.spark.sql.{Dataset, SparkSession}
 
 package object wikidump {
 
@@ -17,7 +18,8 @@ package object wikidump {
         })._1.mkString("")
   }
 
-  def parseSqlDump(lines: Dataset[String]): Dataset[List[String]] = {
+  def parseSqlDump(spark: SparkSession, lines: Dataset[String]): Dataset[List[String]] = {
+    import spark.implicits._
 
     val l = lines.filter(_.startsWith("INSERT"))
       .map(x => x.substring(x.indexOf("VALUES") + "VALUES (".length, x.length - 2))

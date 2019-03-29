@@ -54,18 +54,18 @@ object ArticleGraph {
 
     import spark.implicits._
 
-    val pagelinks = parseSqlDump(spark.read.textFile(config.pageLinksFile)).map {
+    val pagelinks = parseSqlDump(spark, spark.read.textFile(config.pageLinksFile)).map {
       case from :: to_ns :: title :: from_ns :: nil =>
         PageLink(from_ns.toInt, from.toInt, to_ns.toInt, title)
     }.filter(l => l.from_ns == 0 && l.ns == 0)
 
-    val articles = parseSqlDump(spark.read.textFile(config.pagesFile)).map {
+    val articles = parseSqlDump(spark, spark.read.textFile(config.pagesFile)).map {
       case id :: ns :: title :: _ :: _ :: isRedirect :: _ => Article(id.toInt, ns.toInt, title, isRedirect.toInt > 0)
     }.filter(_.ns == 0).cache()
 
     // option("lineSep", ";\n")
 
-    val redirects = parseSqlDump(spark.read.textFile(config.redirectsFile)).map {
+    val redirects = parseSqlDump(spark, spark.read.textFile(config.redirectsFile)).map {
       case id :: ns :: title :: _ => Redirect(id.toInt, ns.toInt, title)
     }
       .filter(_.ns == 0)
@@ -85,13 +85,13 @@ object ArticleGraph {
       .rdd.saveAsTextFile(config.output)
 
     if (config.withClassification) {
-      val talks = parseSqlDump(spark.read.textFile(config.pagesFile)).map {
+      val talks = parseSqlDump(spark, spark.read.textFile(config.pagesFile)).map {
         case id :: ns :: title :: _ => Talk(id.toInt, ns.toInt, title)
       }.filter(_.ns == 1)
 
       //.option("lineSep", ";\n")
 
-      val categories = parseSqlDump(spark.read.textFile(config.categoriesFile)).map {
+      val categories = parseSqlDump(spark, spark.read.textFile(config.categoriesFile)).map {
         case cl_from :: cl_to :: _ => CategoryLink(cl_from.toInt, cl_to)
       }.filter(c => c.categoryName.startsWith("WikiProject") && c.categoryName.endsWith("articles"))
 
