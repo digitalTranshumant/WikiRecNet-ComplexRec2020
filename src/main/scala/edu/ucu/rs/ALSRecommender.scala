@@ -13,7 +13,8 @@ object ALSRecommender {
                      master: String = "local[*]",
                      outputUsers: String = "",
                      outputPages: String = "",
-                     rank: Int = 10
+                     rank: Int = 10,
+                     maxIter: Int = 10
                    )
 
   private val build = new scopt.OptionParser[Config]("ALSRecommender") {
@@ -24,6 +25,7 @@ object ALSRecommender {
     opt[String]("pages").required().action((x, c) => c.copy(outputPages = x))
     opt[String]("master").action((x, c) => c.copy(master = x))
     opt[Int]("dim").action((x, c) => c.copy(rank = x))
+    opt[Int]("iter").action((x, c) => c.copy(maxIter = x))
   }
 
   def main(args: Array[String]): Unit = {
@@ -48,7 +50,7 @@ object ALSRecommender {
       .setUserCol("userId")
       .setItemCol("pageId")
       .setRatingCol("rating")
-      .setMaxIter(5)
+      .setMaxIter(config.maxIter)
       .setRank(config.rank)
 
     //training.show()
@@ -64,7 +66,7 @@ object ALSRecommender {
     //      Row(user, recs.map { case (item, rating) => item })
     //    }
 
-    userRecommended.show()
+    //userRecommended.show()
 
     val testByUser = test.groupByKey(_.getAs[Long]("userId"))
       .agg(collect_list("pageId").as[Array[Long]]).toDF("userId", "actual")
@@ -73,7 +75,7 @@ object ALSRecommender {
     val relevant = userRecommended.join(testByUser, "userId")
       .select("recommendation", "actual").as[(Array[Long], Array[Long])]
 
-    relevant.show()
+    //relevant.show()
     //      .map {
     //      case (user: Int, (actual: Array[Int], predictions: Array[Rating[Int]])) =>
     //        (predictions.map(_.item), actual)
