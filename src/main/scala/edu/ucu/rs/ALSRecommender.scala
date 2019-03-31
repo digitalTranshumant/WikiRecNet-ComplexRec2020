@@ -21,8 +21,8 @@ object ALSRecommender {
     head("ALSRecommender", "1.0")
 
     opt[String]("input").required().action((x, c) => c.copy(sessionFilesPattern = x))
-    opt[String]("users").required().action((x, c) => c.copy(outputUsers = x))
-    opt[String]("pages").required().action((x, c) => c.copy(outputPages = x))
+    //opt[String]("users").required().action((x, c) => c.copy(outputUsers = x))
+    //opt[String]("pages").required().action((x, c) => c.copy(outputPages = x))
     opt[String]("master").action((x, c) => c.copy(master = x))
     opt[Int]("dim").action((x, c) => c.copy(rank = x))
     opt[Int]("iter").action((x, c) => c.copy(maxIter = x))
@@ -85,7 +85,7 @@ object ALSRecommender {
     val metrics = new RankingMetrics(relevant.rdd)
 
     // Precision at K
-    Array(5, 10, 20).foreach { k =>
+    Array(50, 100).foreach { k =>
       println(s"Precision at $k = ${metrics.precisionAt(k)}")
     }
 
@@ -93,17 +93,17 @@ object ALSRecommender {
     println(s"Mean average precision = ${metrics.meanAveragePrecision}")
 
     // Normalized discounted cumulative gain
-    Array(5, 10, 20).foreach { k =>
+    Array(50, 100).foreach { k =>
       println(s"NDCG at $k = ${metrics.ndcgAt(k)}")
     }
 
-    model.userFactors.rdd.map {
-      row =>
-        s"${row.getInt(0)} ${row.getList[Float](1).toArray.mkString(" ")}"
-    }.saveAsTextFile(config.outputUsers)
-    model.itemFactors.rdd.map {
-      row =>
-        s"${row.getInt(0)} ${row.getList[Float](1).toArray.mkString(" ")}"
-    }.saveAsTextFile(config.outputPages)
+//    model.userFactors.rdd.map {
+//      row =>
+//        s"${row.getInt(0)} ${row.getList[Float](1).toArray.mkString(" ")}"
+//    }.saveAsTextFile(config.outputUsers)
+//    model.itemFactors.rdd.map {
+//      row =>
+//        s"${row.getInt(0)} ${row.getList[Float](1).toArray.mkString(" ")}"
+//    }.saveAsTextFile(config.outputPages)
   }
 }
