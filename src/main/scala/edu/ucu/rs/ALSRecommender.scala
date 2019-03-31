@@ -60,7 +60,7 @@ object ALSRecommender {
     model.setColdStartStrategy("drop")
     val predictions = model.transform(test)
 
-    val userRecommended = model.recommendForUserSubset(test, 10)
+    val userRecommended = model.recommendForUserSubset(test, 100)
       .select($"userId", $"recommendations.pageId".as("recommendation"))
     //      .map { case Row(user: Int, recs: Array[(Int, Float)]) =>
     //      Row(user, recs.map { case (item, rating) => item })
