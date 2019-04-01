@@ -1,6 +1,6 @@
 package edu.ucu.rs
 
-import org.apache.spark.mllib.evaluation.RankingMetrics
+import org.apache.spark.mllib.evaluation.{RankingMetrics, MultilabelMetrics}
 import org.apache.spark.ml.recommendation.ALS
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{collect_list, explode, lit}
@@ -82,19 +82,21 @@ object ALSRecommender {
     //
     //    }
 
-    val metrics = new RankingMetrics(relevant.rdd)
+    val rankingMetrics = new RankingMetrics(relevant.rdd)
+    val metrics = new MultilabelMetrics(relevant.as[(Array[Double], Array[Double])].rdd)
 
     // Precision at K
     Array(50, 100).foreach { k =>
-      println(s"Precision at $k = ${metrics.precisionAt(k)}")
+      println(s"Precision at $k = ${rankingMetrics.precisionAt(k)}")
     }
 
     // Mean average precision
-    println(s"Mean average precision = ${metrics.meanAveragePrecision}")
+    println(s"Mean average precision = ${rankingMetrics.meanAveragePrecision}")
+    println(s"Recall = ${metrics.recall}")
 
     // Normalized discounted cumulative gain
     Array(50, 100).foreach { k =>
-      println(s"NDCG at $k = ${metrics.ndcgAt(k)}")
+      println(s"NDCG at $k = ${rankingMetrics.ndcgAt(k)}")
     }
 
 //    model.userFactors.rdd.map {
