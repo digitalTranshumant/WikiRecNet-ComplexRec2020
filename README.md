@@ -170,3 +170,7 @@ gcloud dataproc jobs submit spark --cluster YOUR_CLUSTER_NAME --jars target/scal
     --output gs://some-bucket/user-editions/
 ```
 
+
+## Building the embeddings
+
+Go to this [other repository](https://github.com/pyalex/GraphSAGE).
