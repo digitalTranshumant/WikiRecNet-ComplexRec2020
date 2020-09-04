@@ -16,7 +16,7 @@ Wikipedia is edited by volunteer editors around the world. Considering the large
 If you find this repository useful for your research, please consider citing our paper: 
 ```
 @inproceedings{WikiRecNet,
-    author = {Moskalenko,Oleksii and Parra, Denis and Saez-Trumoper, Diego },
+    author = {Moskalenko,Oleksii and Parra, Denis and Saez-Trumper, Diego},
     title = {Scalable Recommendation of Wikipedia Articles to Editors Using Representation Learning},
     year = {2020},
     booktitle = {Workshop on Recommendation in Complex Scenarios at the ACM RecSys Conference on Recommender Systems (RecSys 2020)},
